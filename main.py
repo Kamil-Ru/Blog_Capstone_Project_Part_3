@@ -49,17 +49,18 @@ class CreatePostForm(FlaskForm):
     submit = SubmitField("Submit Post")
 
 
-## Geting all posts
-posts = db.session.query(BlogPost).all()
-
-
 @app.route('/')
 def get_all_posts():
+    ## Geting all posts from db
+
+    posts = db.session.query(BlogPost).all()
     return render_template("index.html", all_posts=posts)
 
 
 @app.route("/post/<int:index>", methods=["GET"])
 def show_post(index):
+    ##TODO: "posts = db.session.query(BlogPost).all()" - 2times ;/
+    posts = db.session.query(BlogPost).all()
     requested_post = None
 
     for blog_post in posts:
@@ -74,29 +75,22 @@ def new_post():
     form = CreatePostForm()
     if request.method == 'POST' and form.validate_on_submit():
         body = request.form.get('body')
-        print(type(body))
-        print(body)
-        print(type(form))
-        print(form.author.data)
-        print(form.body)
 
         data_now = datetime.now().strftime("%B %d, %Y")
 
         new_entry = BlogPost(
-            title=form.title,
-            subtitle=form.subtitle,
+            title=form.title.data,
+            subtitle=form.subtitle.data,
             date=data_now,
             body=body,
-            author=form.author,
-            img_url=form.img_url
+            author=form.author.data,
+            img_url=form.img_url.data
         )
 
         db.session.add(new_entry)
         db.session.commit()
 
-
         return redirect("/")
-
 
     return render_template("make-post.html", form=form)
 

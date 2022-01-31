@@ -25,7 +25,7 @@
           <form method="POST" role="form">
 
               <!--#Load ckeditor-->
-              {{ ckeditor.load() }}
+              {{ ckeditor.load(pkg_type="full") }}
 
               <!--#Configure the ckeditor to tell it which field in WTForm will need to be a CKEditor.-->
               {{ ckeditor.config(name='body') }}
