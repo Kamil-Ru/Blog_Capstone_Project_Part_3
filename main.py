@@ -92,12 +92,41 @@ def new_post():
 
         return redirect("/")
 
-    return render_template("make-post.html", form=form)
+    edit = False
+
+    return render_template("make-post.html", form=form, edit=edit)
 
 
-@app.route("/edit_post")
-def edit_post():
-    pass
+@app.route("/edit_post/<post_id>", methods=["POST", "GET"])
+def edit_post(post_id):
+    edit = True
+
+    post = db.session.query(BlogPost).get(post_id)
+    form = CreatePostForm(
+        title=post.title,
+        subtitle=post.subtitle,
+        img_url=post.img_url,
+        author=post.author,
+        body=post.body
+    )
+
+    if request.method == "POST" and form.validate_on_submit():
+        body = request.form.get('body')
+        data_now = datetime.now().strftime("%B %d, %Y")
+
+        edit_entry = BlogPost(
+            title=form.title.data,
+            subtitle=form.subtitle.data,
+            date=data_now,
+            body=body,
+            author=form.author.data,
+            img_url=form.img_url.data
+        )
+        db.session.uo
+        db.session.add(edit_entry)
+        db.session.commit()
+
+    return render_template("make-post.html", form=form, edit=edit)
 
 
 @app.route("/about")
