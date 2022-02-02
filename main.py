@@ -122,9 +122,9 @@ def edit_post(post_id):
             author=form.author.data,
             img_url=form.img_url.data
         )
-        db.session.uo
-        db.session.add(edit_entry)
-        db.session.commit()
+        # db.session.uo
+        # db.session.add(edit_entry)
+        # db.session.commit()
 
     return render_template("make-post.html", form=form, edit=edit)
 
