@@ -7,10 +7,6 @@ from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import datetime
 
-## Delete this code:
-# import requests
-# posts = requests.get("https://api.npoint.io/43644ec4f0013682fc0d").json()
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -52,7 +48,6 @@ class CreatePostForm(FlaskForm):
 @app.route('/')
 def get_all_posts():
     ## Geting all posts from db
-
     posts = db.session.query(BlogPost).all()
     return render_template("index.html", all_posts=posts)
 
@@ -114,19 +109,26 @@ def edit_post(post_id):
         body = request.form.get('body')
         data_now = datetime.now().strftime("%B %d, %Y")
 
-        edit_entry = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            date=data_now,
-            body=body,
-            author=form.author.data,
-            img_url=form.img_url.data
-        )
-        # db.session.uo
-        # db.session.add(edit_entry)
-        # db.session.commit()
+        post.title = form.title.data
+        post.subtitle = form.subtitle.data
+        post.date = data_now
+        post.body = body
+        post.author = form.author.data
+        post.img_url = form.img_url.data
+
+        db.session.commit()
+
+        return redirect("/")
 
     return render_template("make-post.html", form=form, edit=edit)
+
+
+@app.route("/delete/<post_id>")
+def delete(post_id):
+    post_to_delete = db.session.query(BlogPost).get(post_id)
+    db.session.delete(post_to_delete)
+    db.session.commit()
+    return redirect("/")
 
 
 @app.route("/about")
